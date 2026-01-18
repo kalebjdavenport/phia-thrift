@@ -1,9 +1,5 @@
 # Phia Thrift: Clothing Identification App
 
-## Product Specification v0.3 (MVP Demo)
-
----
-
 ## Product Vision
 
 **One sentence:** Point your camera at any clothing item and instantly know what it is.
