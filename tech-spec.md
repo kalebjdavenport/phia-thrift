@@ -217,7 +217,6 @@ type StorageKeys = {
     timestamp: number;
     result: IdentificationResult | null;
   } | null;
-  "phia:settings:flash": "on" | "off" | "auto";
 };
 
 // Typed storage helpers
@@ -250,7 +249,6 @@ components/
     ...
   ResultsSheet.tsx     # Bottom sheet overlay for results
   CaptureButton.tsx    # Capture button with animation
-  FlashToggle.tsx      # Flash mode control
 
 lib/
   api/
@@ -262,7 +260,7 @@ lib/
   types.ts             # TypeScript types
 
 hooks/
-  useCamera.ts         # Camera ref, capture, flash controls
+  useCamera.ts         # Camera ref, capture controls
   useIdentification.ts # Identification flow state machine
 
 __tests__/
@@ -290,7 +288,6 @@ __tests__/
 7. **Bottom sheet display** - All result fields render with correct data
 8. **Error states** - No clothing detected, API timeout, rate limit messages
 9. **AsyncStorage persistence** - Last capture restores on app reopen
-10. **Flash toggle** - Preference persists across sessions
 
 ---
 
@@ -345,7 +342,6 @@ const ERROR_MESSAGES = {
 
 ### Camera Screen (`camera.tsx`)
 - Full-screen camera preview
-- Flash toggle (top-right corner)
 - Capture button (bottom center)
 - On capture:
   1. Take photo

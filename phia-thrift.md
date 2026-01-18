@@ -51,7 +51,6 @@ The app opens directly to a full-screen camera view. No splash screen, no onboar
 **Camera View Elements:**
 - Viewfinder (full screen)
 - Capture button (center bottom)
-- Flash toggle (top right)
 
 ### Screen 2: Identification Results (Bottom Sheet)
 

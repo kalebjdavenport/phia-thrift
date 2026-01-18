@@ -1,28 +1,11 @@
 import { useRef, useState, useCallback } from "react";
-import { CameraView, type CameraType, type FlashMode } from "expo-camera";
+import { CameraView, type CameraType } from "expo-camera";
 import * as ImageManipulator from "expo-image-manipulator";
-import { getStorageItem, setStorageItem } from "../lib/storage";
 
 export function useCamera() {
   const cameraRef = useRef<CameraView>(null);
   const [facing, setFacing] = useState<CameraType>("back");
-  const [flash, setFlash] = useState<FlashMode>("off");
   const [isCapturing, setIsCapturing] = useState(false);
-
-  // Load flash preference on mount
-  const loadFlashPreference = useCallback(async () => {
-    const saved = await getStorageItem("phia:settings:flash");
-    if (saved) {
-      setFlash(saved);
-    }
-  }, []);
-
-  const toggleFlash = useCallback(async () => {
-    const newFlash: FlashMode =
-      flash === "off" ? "on" : flash === "on" ? "auto" : "off";
-    setFlash(newFlash);
-    await setStorageItem("phia:settings:flash", newFlash);
-  }, [flash]);
 
   const toggleFacing = useCallback(() => {
     setFacing((current) => (current === "back" ? "front" : "back"));
@@ -56,10 +39,7 @@ export function useCamera() {
   return {
     cameraRef,
     facing,
-    flash,
     isCapturing,
-    loadFlashPreference,
-    toggleFlash,
     toggleFacing,
     capture,
   };
