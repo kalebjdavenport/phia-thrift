@@ -1,13 +1,28 @@
-import { gptBrandResponseSchema, type GPTBrandResponse } from "../schemas";
+import { identificationResponseSchema, type IdentificationResponse } from "../schemas";
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
 
-const BRAND_IDENTIFICATION_PROMPT = `Analyze this clothing item. Identify the brand if visible (logos, labels, distinctive patterns). Respond with JSON only: { "brand": string | null, "productName": string | null, "confidence": "high" | "medium" | "low", "reasoning": string }`;
+const IDENTIFICATION_PROMPT = `Analyze this clothing item and respond with JSON only:
+{
+  "category": string,        // e.g., "Pants", "Shirt", "Jacket"
+  "subcategory": string,     // e.g., "Jeans", "T-Shirt", "Blazer"
+  "color": string,           // Primary color
+  "pattern": string,         // e.g., "Solid", "Striped", "Plaid"
+  "material": string | null, // Best guess: "Denim", "Cotton", "Wool"
+  "style": string,           // e.g., "Casual", "Formal", "Sporty"
+  "brand": string | null,    // Only if logo/label visible
+  "productName": string | null, // Only if identifiable
+  "confidence": {
+    "brand": "high" | "medium" | "low" | "none",
+    "material": "high" | "medium" | "low"
+  },
+  "reasoning": string        // Brief explanation
+}`;
 
-export async function fetchGPTBrandInfo(
+export async function identifyClothing(
   base64Image: string
-): Promise<GPTBrandResponse> {
+): Promise<IdentificationResponse> {
   if (!OPENAI_API_KEY) {
     throw new Error("OPENAI_API_KEY not configured");
   }
@@ -24,7 +39,7 @@ export async function fetchGPTBrandInfo(
         {
           role: "user",
           content: [
-            { type: "text", text: BRAND_IDENTIFICATION_PROMPT },
+            { type: "text", text: IDENTIFICATION_PROMPT },
             {
               type: "image_url",
               image_url: {
@@ -34,7 +49,7 @@ export async function fetchGPTBrandInfo(
           ],
         },
       ],
-      max_tokens: 300,
+      max_tokens: 500,
     }),
   });
 
@@ -56,5 +71,5 @@ export async function fetchGPTBrandInfo(
   }
 
   const parsed = JSON.parse(jsonMatch[0]);
-  return gptBrandResponseSchema.parse(parsed);
+  return identificationResponseSchema.parse(parsed);
 }

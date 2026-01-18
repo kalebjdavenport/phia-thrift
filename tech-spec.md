@@ -2,7 +2,7 @@
 
 ## Overview
 
-Camera app to identify clothing via dual AI APIs. Users capture photos of clothing items, which are analyzed in parallel by Ximilar Fashion API (for attributes/tags) and OpenAI GPT-4o Vision (for brand identification).
+Camera app to identify clothing via GPT-4o Vision API. Users capture photos of clothing items, which are analyzed by OpenAI GPT-4o Vision for comprehensive clothing identification including category, attributes, and brand detection.
 
 ## MVP Flow
 
@@ -33,62 +33,9 @@ Permission Primer → Camera → Capture → Results Sheet
 
 ## API Integration
 
-### Ximilar Fashion API
-
-Detects clothing attributes, categories, and visual features.
-
-**Endpoint:** `POST https://api.ximilar.com/tagging/fashion/v2/detect_tags`
-
-**Request:**
-```typescript
-// Headers
-{
-  "Authorization": "Token {EXPO_PUBLIC_XIMILAR_API_KEY}",
-  "Content-Type": "application/json"
-}
-
-// Body
-{
-  "records": [
-    { "base64": "<base64-encoded-image>" }
-  ]
-}
-```
-
-**Response Schema (Zod):**
-```typescript
-const ximilarTagSchema = z.object({
-  name: z.string(),
-  prob: z.number(),
-});
-
-const ximilarRecordSchema = z.object({
-  _tags: z.record(z.array(ximilarTagSchema)),
-  _objects: z.array(z.object({
-    name: z.string(),
-    prob: z.number(),
-    bound_box: z.array(z.number()).optional(),
-  })).optional(),
-});
-
-const ximilarResponseSchema = z.object({
-  records: z.array(ximilarRecordSchema),
-});
-
-// Extracted result type
-type XimilarResult = {
-  category: string | null;
-  color: string | null;
-  pattern: string | null;
-  material: string | null;
-  style: string | null;
-  tags: Array<{ name: string; confidence: number }>;
-};
-```
-
 ### OpenAI GPT-4o Vision API
 
-Identifies brand and product information from clothing images.
+Identifies all clothing attributes including category, color, pattern, material, style, and brand.
 
 **Endpoint:** `POST https://api.openai.com/v1/chat/completions`
 
@@ -109,7 +56,7 @@ Identifies brand and product information from clothing images.
       "content": [
         {
           "type": "text",
-          "text": "Analyze this clothing item. Identify the brand if visible (logos, labels, distinctive patterns). Respond with JSON: { \"brand\": string | null, \"productName\": string | null, \"confidence\": \"high\" | \"medium\" | \"low\", \"reasoning\": string }"
+          "text": "Analyze this clothing item and respond with JSON only: { \"category\": string, \"subcategory\": string, \"color\": string, \"pattern\": string, \"material\": string | null, \"style\": string, \"brand\": string | null, \"productName\": string | null, \"confidence\": { \"brand\": \"high\" | \"medium\" | \"low\" | \"none\", \"material\": \"high\" | \"medium\" | \"low\" }, \"reasoning\": string }"
         },
         {
           "type": "image_url",
@@ -120,88 +67,55 @@ Identifies brand and product information from clothing images.
       ]
     }
   ],
-  "max_tokens": 300
+  "max_tokens": 500
 }
 ```
 
 **Response Schema (Zod):**
 ```typescript
-const gptBrandResponseSchema = z.object({
+const identificationResponseSchema = z.object({
+  category: z.string(),
+  subcategory: z.string(),
+  color: z.string(),
+  pattern: z.string(),
+  material: z.string().nullable(),
+  style: z.string(),
   brand: z.string().nullable(),
   productName: z.string().nullable(),
-  confidence: z.enum(["high", "medium", "low"]),
+  confidence: z.object({
+    brand: z.enum(["high", "medium", "low", "none"]),
+    material: z.enum(["high", "medium", "low"]),
+  }),
   reasoning: z.string(),
 });
 
-type GPTBrandResult = z.infer<typeof gptBrandResponseSchema>;
+type IdentificationResponse = z.infer<typeof identificationResponseSchema>;
 ```
 
-### Parallel Execution Pattern
+### Result Type
 
 ```typescript
 type IdentificationResult = {
-  // From Ximilar
-  category: string | null;
-  color: string | null;
-  pattern: string | null;
+  category: string;
+  subcategory: string;
+  color: string;
+  pattern: string;
   material: string | null;
-  style: string | null;
-  tags: Array<{ name: string; confidence: number }>;
-
-  // From GPT-4o
+  style: string;
   brand: string | null;
   productName: string | null;
-  brandConfidence: "high" | "medium" | "low" | null;
-  brandReasoning: string | null;
-
-  // Meta
+  confidence: {
+    brand: "high" | "medium" | "low" | "none";
+    material: "high" | "medium" | "low";
+  };
+  reasoning: string;
   timestamp: number;
-  errors: Array<{ source: "ximilar" | "openai"; message: string }>;
 };
 
-async function identifyClothing(base64Image: string): Promise<IdentificationResult> {
-  const [ximilarResult, gptResult] = await Promise.allSettled([
-    fetchXimilarTags(base64Image),
-    fetchGPTBrandInfo(base64Image),
-  ]);
-
-  return mergeResults(ximilarResult, gptResult);
-}
-
-function mergeResults(
-  ximilar: PromiseSettledResult<XimilarResult>,
-  gpt: PromiseSettledResult<GPTBrandResult>
-): IdentificationResult {
-  const errors: IdentificationResult["errors"] = [];
-
-  let ximilarData: Partial<XimilarResult> = {};
-  if (ximilar.status === "fulfilled") {
-    ximilarData = ximilar.value;
-  } else {
-    errors.push({ source: "ximilar", message: ximilar.reason?.message ?? "Unknown error" });
-  }
-
-  let gptData: Partial<GPTBrandResult> = {};
-  if (gpt.status === "fulfilled") {
-    gptData = gpt.value;
-  } else {
-    errors.push({ source: "openai", message: gpt.reason?.message ?? "Unknown error" });
-  }
-
-  return {
-    category: ximilarData.category ?? null,
-    color: ximilarData.color ?? null,
-    pattern: ximilarData.pattern ?? null,
-    material: ximilarData.material ?? null,
-    style: ximilarData.style ?? null,
-    tags: ximilarData.tags ?? [],
-    brand: gptData.brand ?? null,
-    productName: gptData.productName ?? null,
-    brandConfidence: gptData.confidence ?? null,
-    brandReasoning: gptData.reasoning ?? null,
-    timestamp: Date.now(),
-    errors,
-  };
+async function identifyClothing(base64Image: string): Promise<IdentificationResponse> {
+  // Single API call to GPT-4o Vision
+  // Validates response with Zod schema
+  // Returns parsed result
 }
 ```
 
@@ -252,11 +166,9 @@ components/
 
 lib/
   api/
-    ximilar.ts         # Ximilar client with Zod validation
-    openai.ts          # GPT-4o client with Zod validation
-    identify.ts        # Parallel orchestration & result merging
+    openai.ts          # GPT-4o Vision client with Zod validation
   storage.ts           # Typed AsyncStorage helpers
-  schemas.ts           # Shared Zod schemas
+  schemas.ts           # Zod schemas
   types.ts             # TypeScript types
 
 hooks/
@@ -265,9 +177,7 @@ hooks/
 
 __tests__/
   api/
-    ximilar.test.ts    # Ximilar API tests with mocks
     openai.test.ts     # GPT-4o API tests with mocks
-    identify.test.ts   # Parallel execution tests
   components/
     ResultsSheet.test.tsx
   integration/
@@ -281,13 +191,12 @@ __tests__/
 
 1. **Permission flow** - Primer shows when permission not granted, redirects after grant
 2. **Camera capture** - Image captured and converted to base64
-3. **Ximilar API** - Request format, response parsing, error handling
-4. **GPT-4o API** - Request format, response parsing, error handling
-5. **Parallel execution** - Both APIs called simultaneously, partial failures handled
-6. **Result merging** - Ximilar attributes + GPT brand combined correctly
-7. **Bottom sheet display** - All result fields render with correct data
-8. **Error states** - No clothing detected, API timeout, rate limit messages
-9. **AsyncStorage persistence** - Last capture restores on app reopen
+3. **GPT-4o API** - Request format, response parsing, error handling
+4. **Response validation** - Zod schema validates all fields correctly
+5. **Error handling** - Timeout, rate limit, invalid response handling
+6. **Results sheet display** - All result fields render with correct data
+7. **Confidence badges** - Brand and material confidence levels display correctly
+8. **AsyncStorage persistence** - Last capture restores on app reopen
 
 ---
 
@@ -296,13 +205,11 @@ __tests__/
 Create `.env` file (gitignored):
 
 ```bash
-EXPO_PUBLIC_XIMILAR_API_KEY=your_ximilar_api_key
 EXPO_PUBLIC_OPENAI_API_KEY=your_openai_api_key
 ```
 
 Access in code:
 ```typescript
-const XIMILAR_API_KEY = process.env.EXPO_PUBLIC_XIMILAR_API_KEY;
 const OPENAI_API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
 ```
 
@@ -314,7 +221,7 @@ const OPENAI_API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
 - **Network failure**: Show retry button, cache last successful result
 - **Rate limit**: Show "Please wait" message with countdown
 - **Invalid response**: Log to console, show generic error to user
-- **Partial failure**: Display available data with indicator for failed source
+- **Parse failure**: Fallback to raw content display if JSON parsing fails
 
 ### User-Facing Error Messages
 ```typescript
@@ -355,8 +262,8 @@ const ERROR_MESSAGES = {
 - Snap points: 30%, 60%, 90%
 - Content sections:
   - Brand (if detected) with confidence badge
-  - Category
-  - Color, Pattern, Material
-  - Style tags as chips
-  - Errors section (if any API failed)
+  - Category and Subcategory
+  - Color, Pattern, Material (with confidence)
+  - Style
+  - Reasoning explanation
 - "Capture Again" button

@@ -1,6 +1,6 @@
 # Phia Thrift
 
-Camera app to identify clothing via dual AI APIs (Ximilar Fashion + GPT-4o Vision).
+Camera app to identify clothing via GPT-4o Vision API.
 
 ## MVP Flow
 
@@ -41,9 +41,7 @@ components/
 
 lib/
   api/
-    ximilar.ts         # Ximilar Fashion API client
-    openai.ts          # GPT-4o Vision client
-    identify.ts        # Parallel API orchestration
+    openai.ts          # GPT-4o Vision client (clothing identification)
   storage.ts           # Typed AsyncStorage helpers
   schemas.ts           # Zod schemas
   types.ts             # TypeScript types
@@ -57,11 +55,7 @@ hooks/
 
 ### API Keys
 Store in `.env` (gitignored), access via `process.env.EXPO_PUBLIC_*`:
-- `EXPO_PUBLIC_XIMILAR_API_KEY`
 - `EXPO_PUBLIC_OPENAI_API_KEY`
-
-### Parallel API Calls
-Always use `Promise.allSettled` for dual API calls to handle partial failures gracefully.
 
 ### Zod Validation
 Validate all API responses with Zod schemas before use.
