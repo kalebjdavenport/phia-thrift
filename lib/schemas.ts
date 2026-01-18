@@ -1,35 +1,20 @@
 import { z } from "zod";
 
-// Ximilar API Schemas
-export const ximilarTagSchema = z.object({
-  name: z.string(),
-  prob: z.number(),
-});
-
-export const ximilarRecordSchema = z.object({
-  _tags: z.record(z.array(ximilarTagSchema)),
-  _objects: z
-    .array(
-      z.object({
-        name: z.string(),
-        prob: z.number(),
-        bound_box: z.array(z.number()).optional(),
-      })
-    )
-    .optional(),
-});
-
-export const ximilarResponseSchema = z.object({
-  records: z.array(ximilarRecordSchema),
-});
-
-// GPT-4o API Schemas
-export const gptBrandResponseSchema = z.object({
+// GPT-4o unified identification response schema
+export const identificationResponseSchema = z.object({
+  category: z.string(),
+  subcategory: z.string(),
+  color: z.string(),
+  pattern: z.string(),
+  material: z.string().nullable(),
+  style: z.string(),
   brand: z.string().nullable(),
   productName: z.string().nullable(),
-  confidence: z.enum(["high", "medium", "low"]),
+  confidence: z.object({
+    brand: z.enum(["high", "medium", "low", "none"]),
+    material: z.enum(["high", "medium", "low"]),
+  }),
   reasoning: z.string(),
 });
 
-export type XimilarResponse = z.infer<typeof ximilarResponseSchema>;
-export type GPTBrandResponse = z.infer<typeof gptBrandResponseSchema>;
+export type IdentificationResponse = z.infer<typeof identificationResponseSchema>;

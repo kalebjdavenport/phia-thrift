@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { identifyClothing } from "../lib/api/identify";
+import { identifyClothing } from "../lib/api/openai";
 import type { IdentificationResult } from "../lib/types";
 import { setStorageItem } from "../lib/storage";
 
@@ -17,7 +17,11 @@ export function useIdentification() {
       setState({ status: "loading" });
 
       try {
-        const result = await identifyClothing(base64Image);
+        const response = await identifyClothing(base64Image);
+        const result: IdentificationResult = {
+          ...response,
+          timestamp: Date.now(),
+        };
 
         // Save last capture
         await setStorageItem("phia:lastCapture", {

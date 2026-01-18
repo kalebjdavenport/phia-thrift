@@ -1,21 +1,18 @@
 export type IdentificationResult = {
-  // From Ximilar
-  category: string | null;
-  color: string | null;
-  pattern: string | null;
+  category: string;
+  subcategory: string;
+  color: string;
+  pattern: string;
   material: string | null;
-  style: string | null;
-  tags: Array<{ name: string; confidence: number }>;
-
-  // From GPT-4o
+  style: string;
   brand: string | null;
   productName: string | null;
-  brandConfidence: "high" | "medium" | "low" | null;
-  brandReasoning: string | null;
-
-  // Meta
+  confidence: {
+    brand: "high" | "medium" | "low" | "none";
+    material: "high" | "medium" | "low";
+  };
+  reasoning: string;
   timestamp: number;
-  errors: Array<{ source: "ximilar" | "openai"; message: string }>;
 };
 
 export type StorageKeys = {
