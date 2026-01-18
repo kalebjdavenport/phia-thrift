@@ -25,5 +25,4 @@ export type StorageKeys = {
     timestamp: number;
     result: IdentificationResult | null;
   } | null;
-  "phia:settings:flash": "on" | "off" | "auto";
 };

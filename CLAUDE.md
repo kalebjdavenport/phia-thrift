@@ -38,7 +38,6 @@ components/
   ui/                  # React Native Reusables (shadcn-style)
   ResultsSheet.tsx     # Bottom sheet for results
   CaptureButton.tsx    # Camera capture button
-  FlashToggle.tsx      # Flash control
 
 lib/
   api/
