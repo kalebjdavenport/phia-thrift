@@ -2,6 +2,20 @@ import { identificationResponseSchema, type IdentificationResponse } from "../sc
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
+const USE_MOCK = true; // Set to false to use real API
+
+const MOCK_RESPONSE: IdentificationResponse = {
+  category: "Pants",
+  subcategory: "Jeans",
+  color: "Blue",
+  pattern: "Solid",
+  material: "Denim",
+  style: "Casual",
+  brand: "Levi's",
+  productName: "501 Original",
+  confidence: { brand: "high", material: "high" },
+  reasoning: "Classic blue denim jeans with visible Levi's red tab",
+};
 
 const IDENTIFICATION_PROMPT = `Analyze this clothing item and respond with JSON only:
 {
@@ -23,6 +37,12 @@ const IDENTIFICATION_PROMPT = `Analyze this clothing item and respond with JSON 
 export async function identifyClothing(
   base64Image: string
 ): Promise<IdentificationResponse> {
+  if (USE_MOCK) {
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return MOCK_RESPONSE;
+  }
+
   if (!OPENAI_API_KEY) {
     throw new Error("OPENAI_API_KEY not configured");
   }
