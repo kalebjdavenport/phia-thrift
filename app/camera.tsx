@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { View, Text } from 'react-native';
 import { CameraView } from 'expo-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,10 +19,12 @@ export default function CameraScreen() {
 
   const { cameraRef, facing, flash, isCapturing, toggleFacing, toggleFlash, capture } = useCamera();
   const { identify, reset, isLoading, result, error } = useIdentification();
+  const [imageUri, setImageUri] = useState<string | null>(null);
 
   async function handleCapture() {
     const processed = await capture();
     if (processed) {
+      setImageUri(processed.uri);
       await identify(processed.base64, processed.uri);
       bottomSheetRef.current?.snapToIndex(0);
     }
@@ -31,12 +33,14 @@ export default function CameraScreen() {
   function handleRetry() {
     bottomSheetRef.current?.close();
     reset();
+    setImageUri(null);
     handleCapture();
   }
 
   function handleCloseSheet() {
     bottomSheetRef.current?.close();
     reset();
+    setImageUri(null);
   }
 
   function handleClose() {
@@ -96,6 +100,7 @@ export default function CameraScreen() {
           ref={bottomSheetRef}
           result={result}
           error={error}
+          imageUri={imageUri}
           onClose={handleCloseSheet}
           onRetry={handleRetry}
         />

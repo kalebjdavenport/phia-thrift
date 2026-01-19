@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useMemo } from 'react';
-import { View, Text, Pressable, Linking } from 'react-native';
+import { View, Text, Pressable, Linking, Image } from 'react-native';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { X, AlertCircle } from 'lucide-react-native';
 import type { IdentificationResponse } from '@/lib/schemas';
@@ -9,12 +9,13 @@ import { buildPhiaSearchUrl } from '@/lib/utils';
 interface ResultsSheetProps {
   result: IdentificationResponse | null;
   error: string | null;
+  imageUri: string | null;
   onClose: () => void;
   onRetry: () => void;
 }
 
 export const ResultsSheet = forwardRef<BottomSheet, ResultsSheetProps>(
-  function ResultsSheet({ result, error, onClose, onRetry }, ref) {
+  function ResultsSheet({ result, error, imageUri, onClose, onRetry }, ref) {
     const snapPoints = useMemo(() => ['50%', '85%'], []);
 
     const renderBackdrop = useCallback(
@@ -124,6 +125,17 @@ export const ResultsSheet = forwardRef<BottomSheet, ResultsSheetProps>(
           <View className="mt-4">
             <Text className="text-sm text-muted">{result.reasoning}</Text>
           </View>
+
+          {/* Captured Image Thumbnail */}
+          {imageUri && (
+            <View className="mt-6 items-center">
+              <Image
+                source={{ uri: imageUri }}
+                className="h-24 w-24 rounded-xl"
+                resizeMode="cover"
+              />
+            </View>
+          )}
 
           {/* Search on Phia Button */}
           {(() => {
