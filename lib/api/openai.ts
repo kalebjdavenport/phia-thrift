@@ -2,7 +2,7 @@ import { identificationResponseSchema, type IdentificationResponse } from "../sc
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
-const USE_MOCK = true; // Set to false to use real API
+const USE_MOCK = false; // Set to false to use real API
 
 const MOCK_RESPONSE: IdentificationResponse = {
   category: "Pants",

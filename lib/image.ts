@@ -30,8 +30,11 @@ export async function processImage(sourceUri: string): Promise<ProcessedImage> {
     }
   );
 
-  // Save to cache directory (overwrites existing)
+  // Save to cache directory (delete existing first to allow overwrite)
   const cachedFile = new File(Paths.cache, 'processed_capture.jpg');
+  if (cachedFile.exists) {
+    await cachedFile.delete();
+  }
   const sourceFile = new File(result.uri);
   await sourceFile.copy(cachedFile);
 
