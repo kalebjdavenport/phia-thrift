@@ -1,129 +1,59 @@
 # Phia Thrift
 
-Camera app to identify clothing and search Phia (built on GPT-4o Vision)
+Snap a photo of any clothing item and instantly identify the brand, material, and style using GPT-4o Vision. Search results on [Phia](https://phia.com) with one tap.
 
-<img width="521" height="680" alt="Screenshot 2026-01-19 at 17 08 02" src="https://github.com/user-attachments/assets/44a5e036-0f6f-4e37-a546-18462cb7ded1" />
-<img width="528" height="598" alt="Screenshot 2026-01-19 at 17 08 33" src="https://github.com/user-attachments/assets/63a33f30-6db6-4b1f-a1a7-e11d89d85277" />
+<p align="center">
+  <img width="260" alt="Landing screen" src="https://github.com/user-attachments/assets/44a5e036-0f6f-4e37-a546-18462cb7ded1" />
+  <img width="260" alt="Results screen" src="https://github.com/user-attachments/assets/63a33f30-6db6-4b1f-a1a7-e11d89d85277" />
+</p>
 
-
-
-## Prerequisites
-
-- **Node.js 20+** (required - uses modern JS features)
-- **Xcode 15+** with iOS Simulator
-- **Xcode Command Line Tools**: `xcode-select --install`
-- API keys for Ximilar and OpenAI (see [Environment Variables](#environment-variables))
-
-### Verify Node Version
+## Quick Start
 
 ```bash
-node --version  # Should be v20.x or higher
-```
-
-If using nvm:
-```bash
-nvm install 20
-nvm use 20
-```
-
-## Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/phia-thrift.git
-   cd phia-thrift
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Create environment file**
-   ```bash
-   cp .env.example .env
-   ```
-   Then edit `.env` with your API keys (see below).
-
-## Environment Variables
-
-Create a `.env` file in the project root:
-
-```bash
-EXPO_PUBLIC_XIMILAR_API_KEY=your_ximilar_api_key
-EXPO_PUBLIC_OPENAI_API_KEY=your_openai_api_key
-```
-
-### Getting API Keys
-
-- **Ximilar**: Sign up at [ximilar.com](https://www.ximilar.com/) → Free tier: 1,000 credits/month
-- **OpenAI**: Get key at [platform.openai.com](https://platform.openai.com/) → Pay-per-use (~$0.01-0.03/image)
-
-## Running the App
-
-```bash
-# Start Expo dev server
-npm start
-
-# Or run directly on iOS Simulator
+git clone https://github.com/kalebjdavenport/phia-thrift.git
+cd phia-thrift
+npm install
+cp .env.example .env    # Add your OpenAI API key
 npm run ios
 ```
 
-Press `i` in the terminal to open iOS Simulator.
+**Requirements:** Node.js 20+, Xcode 15+
+
+## Environment Variables
+
+```bash
+EXPO_PUBLIC_OPENAI_API_KEY=your_openai_api_key
+```
+
+Get your API key at [platform.openai.com](https://platform.openai.com)
 
 ## Tech Stack
 
-| Category | Package | Version |
-|----------|---------|---------|
-| Framework | Expo SDK | 54 |
-| Runtime | React Native | 0.81.5 |
-| React | React | 19.1 |
-| Router | expo-router | 6.x |
-| Styling | NativeWind | 4.x |
-| Camera | expo-camera | 17.x |
-| Bottom Sheet | @gorhom/bottom-sheet | 5.x |
-| Validation | Zod | 4.x |
-| State | Zustand | 5.x |
-
-## Scripts
-
-```bash
-npm start          # Start Expo dev server
-npm run ios        # Run on iOS Simulator
-npm test           # Run tests
-npm run test:watch # Run tests in watch mode
-```
+- **Expo SDK 54** with React Native 0.81.5
+- **expo-router v6** for file-based navigation
+- **NativeWind** for Tailwind CSS styling
+- **GPT-4o Vision** for clothing identification
+- **@gorhom/bottom-sheet** for results display
 
 ## Project Structure
 
 ```
-app/                 # Expo Router screens
-components/          # React components
-  ui/                # Reusable UI components
-hooks/               # Custom React hooks
+app/                 # Screens (primer, camera)
+components/          # UI components
+hooks/               # useCamera, useIdentification
 lib/
-  api/               # API clients (Ximilar, OpenAI)
-  schemas.ts         # Zod validation schemas
-  storage.ts         # AsyncStorage helpers
+  api/openai.ts      # Vision API client
+  schemas.ts         # Zod validation
   types.ts           # TypeScript types
 ```
 
-## Troubleshooting
+## Scripts
 
-### `configs.toReversed is not a function`
-You're using Node < 20. Upgrade Node:
-```bash
-nvm install 20 && nvm use 20
-```
-
-### Camera not working in Simulator
-The iOS Simulator doesn't have a real camera. Test on a physical device or use mock data.
-
-### Metro bundler issues
-Clear cache and restart:
-```bash
-npx expo start --clear
-```
+| Command | Description |
+|---------|-------------|
+| `npm start` | Start Expo dev server |
+| `npm run ios` | Run on iOS Simulator |
+| `npm test` | Run tests |
 
 ## License
 
