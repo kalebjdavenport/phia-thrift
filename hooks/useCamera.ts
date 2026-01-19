@@ -1,36 +1,31 @@
 import { useRef, useState, useCallback } from "react";
 import { CameraView, type CameraType } from "expo-camera";
-import * as ImageManipulator from "expo-image-manipulator";
+import { processImage, type ProcessedImage } from "@/lib/image";
 
 export function useCamera() {
   const cameraRef = useRef<CameraView>(null);
   const [facing, setFacing] = useState<CameraType>("back");
+  const [flash, setFlash] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
 
   const toggleFacing = useCallback(() => {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }, []);
 
-  const capture = useCallback(async (): Promise<string | null> => {
+  const toggleFlash = useCallback(() => {
+    setFlash((current) => !current);
+  }, []);
+
+  const capture = useCallback(async (): Promise<ProcessedImage | null> => {
     if (!cameraRef.current || isCapturing) return null;
 
     setIsCapturing(true);
     try {
-      const photo = await cameraRef.current.takePictureAsync({
-        quality: 0.8,
-        base64: false,
-      });
-
+      const photo = await cameraRef.current.takePictureAsync();
       if (!photo?.uri) return null;
 
-      // Convert to base64
-      const manipulated = await ImageManipulator.manipulateAsync(
-        photo.uri,
-        [{ resize: { width: 1024 } }],
-        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG, base64: true }
-      );
-
-      return manipulated.base64 ?? null;
+      // Resize, convert to JPEG, save to cache
+      return await processImage(photo.uri);
     } finally {
       setIsCapturing(false);
     }
@@ -39,8 +34,10 @@ export function useCamera() {
   return {
     cameraRef,
     facing,
+    flash,
     isCapturing,
     toggleFacing,
+    toggleFlash,
     capture,
   };
 }
