@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Camera as CameraIcon } from 'lucide-react-native';
 import { Camera } from 'expo-camera';
@@ -9,15 +9,11 @@ export default function Primer() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  async function handleEnableCamera() {
+  async function handleOpenCamera() {
     const { status } = await Camera.requestCameraPermissionsAsync();
     if (status === 'granted') {
       router.replace('/camera');
     }
-  }
-
-  function handleMaybeLater() {
-    // Stay on primer screen - user can try again
   }
 
   return (
@@ -31,24 +27,20 @@ export default function Primer() {
         </View>
 
         <Text className="mb-3 text-center text-2xl font-bold text-primary">
-          Enable Camera Access
+          Identify Any Clothing
         </Text>
 
         <Text className="mb-10 text-center text-base text-muted">
-          Take photos to identify clothing
+          Snap a photo to discover brand, style, and more
         </Text>
 
         <Button
-          onPress={handleEnableCamera}
+          onPress={handleOpenCamera}
           size="lg"
           className="mb-4 w-full"
         >
-          Enable Camera
+          Open Camera
         </Button>
-
-        <Pressable onPress={handleMaybeLater} className="p-2 active:opacity-60">
-          <Text className="text-base text-muted">Maybe Later</Text>
-        </Pressable>
       </View>
     </View>
   );
