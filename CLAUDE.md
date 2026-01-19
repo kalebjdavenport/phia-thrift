@@ -4,7 +4,7 @@ Camera app to identify clothing via GPT-4o Vision API.
 
 ## MVP Flow
 
-Permission Primer → Camera → Capture → Results Sheet
+Landing → Camera → Capture → Results Sheet
 
 ## Commands
 
@@ -31,7 +31,7 @@ npm test            # Run tests
 app/
   _layout.tsx          # Root layout with providers
   index.tsx            # Permission check → redirect
-  primer.tsx           # Permission primer screen
+  primer.tsx           # Landing screen ("Open Camera" CTA)
   camera.tsx           # Main camera screen
 
 components/
@@ -60,8 +60,8 @@ Store in `.env` (gitignored), access via `process.env.EXPO_PUBLIC_*`:
 ### Zod Validation
 Validate all API responses with Zod schemas before use.
 
-### Permission Flow
+### App Flow
 1. Check camera permission on app launch
-2. Show primer screen if not granted
-3. Request permission from primer
-4. Redirect to camera on grant
+2. If granted → go directly to camera
+3. If not granted → show landing screen
+4. Tap "Open Camera" → request permission → open camera
