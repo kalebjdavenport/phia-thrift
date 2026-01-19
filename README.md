@@ -2,10 +2,14 @@
 
 Snap a photo of any clothing item and instantly identify the brand, material, and style using GPT-4o Vision. Search results on [Phia](https://phia.com) with one tap.
 
-<p align="center">
-  <img width="260" alt="Landing screen" src="https://github.com/user-attachments/assets/44a5e036-0f6f-4e37-a546-18462cb7ded1" />
-  <img width="260" alt="Results screen" src="https://github.com/user-attachments/assets/63a33f30-6db6-4b1f-a1a7-e11d89d85277" />
-</p>
+[Watch the demo](https://youtu.be/VHIwU9wsY5s)
+
+<table>
+  <tr>
+    <td><img width="260" alt="Landing screen" src="https://github.com/user-attachments/assets/44a5e036-0f6f-4e37-a546-18462cb7ded1" /></td>
+    <td><img width="260" alt="Results screen" src="https://github.com/user-attachments/assets/63a33f30-6db6-4b1f-a1a7-e11d89d85277" /></td>
+  </tr>
+</table>
 
 ## Quick Start
 
