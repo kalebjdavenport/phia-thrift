@@ -25,13 +25,13 @@ const IDENTIFICATION_PROMPT = `Analyze this clothing item and respond with JSON 
   "pattern": string,         // e.g., "Solid", "Striped", "Plaid"
   "material": string | null, // Best guess: "Denim", "Cotton", "Wool"
   "style": string,           // e.g., "Casual", "Formal", "Sporty"
-  "brand": string | null,    // Only if logo/label visible
-  "productName": string | null, // Only if identifiable
+  "brand": string | null,    // Do your best to guess based on style, cut, stitching, hardware, design elements, but be cautious about knock-offs and dupes
+  "productName": string | null, // Best guess if recognizable
   "confidence": {
-    "brand": "high" | "medium" | "low" | "none",
+    "brand": "high" | "medium" | "low" | "none",  // high=logo visible, medium=distinctive features, low=educated guess
     "material": "high" | "medium" | "low"
   },
-  "reasoning": string        // Brief explanation
+  "reasoning": string        // Brief explanation including brand reasoning
 }`;
 
 export async function identifyClothing(
