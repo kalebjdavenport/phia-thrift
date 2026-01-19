@@ -69,10 +69,10 @@ Validate all API responses with Zod schemas before use.
 ### Phia Search Feature
 After identification, show a "Search on Phia" button that opens external search.
 
-**URL format:** `https://phia.com/search/{brand}%20{subcategory}%20{color}%20{material}%20{pattern}%20{style}%20{productName}`
+**URL format:** `https://phia.com/search/{brand}%20{subcategory}%20{productName}%20{color}%20{material}`
 
 **Rules:**
 - Only show button when `confidence.brand !== 'none'`
 - URL-encode all values, filter out null/empty values
-- Variable order: brand (1st), subcategory (2nd), then color, material, pattern, style, productName
+- Variable order: brand (1st), subcategory (2nd), productName (3rd), color (4th), material (5th)
 - Big purple button at bottom of ResultsSheet
