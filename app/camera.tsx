@@ -10,6 +10,7 @@ import { IconButton } from '@/components/ui/IconButton';
 import { CaptureButton } from '@/components/CaptureButton';
 import { ResultsSheet } from '@/components/ResultsSheet';
 import { identifyClothing } from '@/lib/api/openai';
+import { processImage } from '@/lib/image';
 import type { IdentificationResponse } from '@/lib/schemas';
 
 export default function CameraScreen() {
@@ -33,9 +34,11 @@ export default function CameraScreen() {
 
     setCapturing(true);
     try {
-      const photo = await cameraRef.current.takePictureAsync({ base64: true });
-      if (photo?.base64) {
-        const identification = await identifyClothing(photo.base64);
+      const photo = await cameraRef.current.takePictureAsync();
+      if (photo?.uri) {
+        // Resize to 1024px, convert to JPEG, save to cache
+        const processed = await processImage(photo.uri);
+        const identification = await identifyClothing(processed.base64);
         setResult(identification);
         bottomSheetRef.current?.snapToIndex(0);
       }
