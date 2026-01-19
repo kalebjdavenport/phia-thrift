@@ -72,7 +72,7 @@ After identification, show a "Search on Phia" button that opens external search.
 **URL format:** `https://phia.com/search/{brand}%20{subcategory}%20{productName}%20{color}%20{material}`
 
 **Rules:**
-- Only show button when `confidence.brand !== 'none'`
-- URL-encode all values, filter out null/empty values
+- All fields are optional, null/empty values filtered out
+- Only show button if at least one field has data
 - Variable order: brand (1st), subcategory (2nd), productName (3rd), color (4th), material (5th)
 - Big purple button at bottom of ResultsSheet
