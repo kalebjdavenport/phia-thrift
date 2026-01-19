@@ -6,7 +6,7 @@ export type IdentificationResult = {
   pattern: string;
   material: string | null;
   style: string;
-  brand: string | null;
+  brand: string;
   productName: string | null;
   confidence: {
     brand: "high" | "medium" | "low" | "none";

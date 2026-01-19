@@ -31,7 +31,7 @@ Respond with JSON only:
   "pattern": string,         // e.g., "Solid", "Striped", "Plaid" (use "Unknown" if not identified)
   "material": string | null, // Best guess: "Leather", "Denim", "Cotton", "Wool"
   "style": string,           // e.g., "Casual", "Formal", "Sporty", "Athletic" (use "Unknown" if not identified)
-  "brand": string | null,    // Do your best to guess based on style, cut, stitching, hardware, design elements, but be cautious about knock-offs and dupes
+  "brand": string,           // ALWAYS guess a brand, even if uncertain. Use style, cut, stitching, hardware, design elements, price point indicators. Never leave blank or null.
   "productName": string | null, // Best guess if recognizable
   "confidence": {
     "brand": "high" | "medium" | "low" | "none",  // high=logo visible, medium=distinctive features, low=educated guess
