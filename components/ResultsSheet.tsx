@@ -1,6 +1,6 @@
 import { forwardRef, useCallback, useMemo } from 'react';
 import { View, Text, Pressable, Linking, Image } from 'react-native';
-import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView, type BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import { X, AlertCircle, Camera } from 'lucide-react-native';
 import type { IdentificationResponse } from '@/lib/schemas';
 import { IconButton } from '@/components/ui/IconButton';
@@ -19,7 +19,7 @@ export const ResultsSheet = forwardRef<BottomSheet, ResultsSheetProps>(
     const snapPoints = useMemo(() => ['50%', '85%'], []);
 
     const renderBackdrop = useCallback(
-      (props: any) => (
+      (props: BottomSheetBackdropProps) => (
         <BottomSheetBackdrop
           {...props}
           disappearsOnIndex={-1}

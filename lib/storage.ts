@@ -7,7 +7,8 @@ export async function getStorageItem<K extends keyof StorageKeys>(
   try {
     const value = await AsyncStorage.getItem(key);
     return value ? JSON.parse(value) : null;
-  } catch {
+  } catch (error) {
+    console.error(`Storage read error for key "${key}":`, error);
     return null;
   }
 }
@@ -18,8 +19,8 @@ export async function setStorageItem<K extends keyof StorageKeys>(
 ): Promise<void> {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    // Silently fail - storage errors shouldn't crash the app
+  } catch (error) {
+    console.error(`Storage write error for key "${key}":`, error);
   }
 }
 
@@ -28,7 +29,7 @@ export async function removeStorageItem<K extends keyof StorageKeys>(
 ): Promise<void> {
   try {
     await AsyncStorage.removeItem(key);
-  } catch {
-    // Silently fail
+  } catch (error) {
+    console.error(`Storage remove error for key "${key}":`, error);
   }
 }

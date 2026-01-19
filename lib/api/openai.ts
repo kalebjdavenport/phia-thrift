@@ -18,7 +18,18 @@ const MOCK_RESPONSE: IdentificationResponse = {
   reasoning: "Classic blue denim jeans with visible Levi's red tab",
 };
 
-const IDENTIFICATION_PROMPT = `Identify the clothing item at the CENTER of this image. Focus on whatever is in the middle/focal point of the photo, NOT whatever takes up the most space. If there are multiple items visible, analyze ONLY the one that appears to be the main subject based on positioning (centered) and focus.
+const IDENTIFICATION_PROMPT = `Act as an expert vintage clothing authenticator and thrift scout. 
+Analyze the image(s) provided. 
+
+CRITICAL BRAND ANALYSIS:
+1. Scan for visible logos or emblems.
+2. If no logo is visible, examine buttons, zippers, and rivets for engraved text.
+3. Look at the "cut" and "silhouette" (e.g., specific vintage Levi's silhouettes).
+4. Inspect the neck tag if visible. 
+
+If the brand is not explicitly visible, provide your "Best Professional Guess" based on the design language, but reflect this in the "confidence" score.
+
+Identify the clothing item at the CENTER of this image. Focus on whatever is in the middle/focal point of the photo, NOT whatever takes up the most space. If there are multiple items visible, analyze ONLY the one that appears to be the main subject based on positioning (centered) and focus.
 
 If you CANNOT identify a clothing item (image is blurry, no clothing visible, unclear what the subject is, etc.), set "identified" to false and explain why in "reasoning". Use placeholder values for other fields.
 
@@ -34,8 +45,8 @@ Respond with JSON only:
   "brand": string,           // ALWAYS guess a brand, even if uncertain. Use style, cut, stitching, hardware, design elements, price point indicators. Never leave blank or null.
   "productName": string | null, // Best guess if recognizable
   "confidence": {
-    "brand": "high" | "medium" | "low" | "none",  // high=logo visible, medium=distinctive features, low=educated guess
-    "material": "high" | "medium" | "low"
+    "brand": "high" | "medium" | "low" | "none",  // high=logo visible, medium=distinctive features, low=educated guess, none=complete unknown
+    "material": "high" | "medium" | "low" | "none"  // none if material cannot be determined
   },
   "reasoning": string        // Brief explanation. If not identified, explain why (blurry, no clothing, multiple items, etc.)
 }`;
