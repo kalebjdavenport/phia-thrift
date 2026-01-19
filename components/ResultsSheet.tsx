@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useMemo } from 'react';
 import { View, Text, Pressable, Linking, Image } from 'react-native';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
-import { X, AlertCircle } from 'lucide-react-native';
+import { X, AlertCircle, Camera } from 'lucide-react-native';
 import type { IdentificationResponse } from '@/lib/schemas';
 import { IconButton } from '@/components/ui/IconButton';
 import { buildPhiaSearchUrl } from '@/lib/utils';
@@ -69,7 +69,41 @@ export const ResultsSheet = forwardRef<BottomSheet, ResultsSheetProps>(
                 </Pressable>
               </View>
             </>
-          ) : !result ? null : (
+          ) : !result ? null : !result.identified ? (
+            /* Unidentified State */
+            <>
+              <View className="mb-4 flex-row items-center justify-between">
+                <Text className="text-xl font-bold text-primary">Hmm...</Text>
+                <IconButton icon={X} color="#000" size={24} onPress={onClose} />
+              </View>
+              <View className="items-center py-8">
+                <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                  <Camera size={32} color="#8e8e8e" />
+                </View>
+                <Text className="text-center text-lg font-medium text-primary">
+                  Couldn't identify this item
+                </Text>
+                <Text className="mt-2 px-4 text-center text-sm text-muted">
+                  {result.reasoning}
+                </Text>
+                {imageUri && (
+                  <Image
+                    source={{ uri: imageUri }}
+                    className="mt-4 h-20 w-20 rounded-xl"
+                    resizeMode="cover"
+                  />
+                )}
+                <Pressable
+                  className="mt-6 rounded-xl bg-primary px-8 py-3 active:bg-secondary"
+                  onPress={onRetry}
+                >
+                  <Text className="text-center text-base font-semibold text-white">
+                    Take Another Photo
+                  </Text>
+                </Pressable>
+              </View>
+            </>
+          ) : (
             <>
           {/* Header */}
           <View className="mb-4 flex-row items-center justify-between">

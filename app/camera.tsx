@@ -76,35 +76,33 @@ export default function CameraScreen() {
           />
         </View>
 
-        {/* Bottom Bar */}
-        <View
-          className="absolute bottom-0 left-0 right-0 bg-black/80"
-          style={{ paddingBottom: insets.bottom + 16 }}
-        >
-          <View className="flex-row items-center justify-around py-4">
-            <IconButton
-              icon={Image}
-              onPress={handleGallery}
-              size={28}
-              disabled={showLoading}
-            />
-            <CaptureButton
-              onPress={handleCapture}
-              disabled={showLoading}
-              loading={showLoading}
-            />
-            <IconButton
-              icon={SwitchCamera}
-              onPress={toggleFacing}
-              size={28}
-              disabled={showLoading}
-            />
+        {/* Bottom Bar - hidden during loading */}
+        {!showLoading && (
+          <View
+            className="absolute bottom-0 left-0 right-0 bg-black/80"
+            style={{ paddingBottom: insets.bottom + 16 }}
+          >
+            <View className="flex-row items-center justify-around py-4">
+              <IconButton
+                icon={Image}
+                onPress={handleGallery}
+                size={28}
+              />
+              <CaptureButton
+                onPress={handleCapture}
+              />
+              <IconButton
+                icon={SwitchCamera}
+                onPress={toggleFacing}
+                size={28}
+              />
+            </View>
           </View>
-        </View>
+        )}
 
         {showLoading && (
-          <View className="absolute inset-0 items-center justify-center bg-black/70">
-            <View className="items-center rounded-2xl bg-black/80 px-8 py-6">
+          <View className="absolute inset-0 items-center justify-center bg-black">
+            <View className="items-center px-8 py-6">
               <Text className="text-lg font-semibold text-white">
                 {isCapturing ? 'Capturing...' : 'Analyzing clothing...'}
               </Text>
