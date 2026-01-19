@@ -82,17 +82,36 @@ export default function CameraScreen() {
           style={{ paddingBottom: insets.bottom + 16 }}
         >
           <View className="flex-row items-center justify-around py-4">
-            <IconButton icon={Image} onPress={handleGallery} size={28} />
-            <CaptureButton onPress={handleCapture} disabled={showLoading} />
-            <IconButton icon={SwitchCamera} onPress={toggleFacing} size={28} />
+            <IconButton
+              icon={Image}
+              onPress={handleGallery}
+              size={28}
+              disabled={showLoading}
+            />
+            <CaptureButton
+              onPress={handleCapture}
+              disabled={showLoading}
+              loading={showLoading}
+            />
+            <IconButton
+              icon={SwitchCamera}
+              onPress={toggleFacing}
+              size={28}
+              disabled={showLoading}
+            />
           </View>
         </View>
 
         {showLoading && (
-          <View className="absolute inset-0 items-center justify-center bg-black/50">
-            <Text className="text-lg text-white">
-              {isCapturing ? 'Capturing...' : 'Identifying...'}
-            </Text>
+          <View className="absolute inset-0 items-center justify-center bg-black/70">
+            <View className="items-center rounded-2xl bg-black/80 px-8 py-6">
+              <Text className="text-lg font-semibold text-white">
+                {isCapturing ? 'Capturing...' : 'Analyzing clothing...'}
+              </Text>
+              <Text className="mt-2 text-sm text-gray-400">
+                Please wait
+              </Text>
+            </View>
           </View>
         )}
 
