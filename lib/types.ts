@@ -1,4 +1,5 @@
 export type IdentificationResult = {
+  identified: boolean;
   category: string;
   subcategory: string;
   color: string;
