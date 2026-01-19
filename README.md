@@ -1,6 +1,11 @@
 # Phia Thrift
 
-Camera app to identify clothing via dual AI APIs (Ximilar Fashion + GPT-4o Vision).
+Camera app to identify clothing and search Phia (built on GPT-4o Vision)
+
+<img width="521" height="680" alt="Screenshot 2026-01-19 at 17 08 02" src="https://github.com/user-attachments/assets/44a5e036-0f6f-4e37-a546-18462cb7ded1" />
+<img width="528" height="598" alt="Screenshot 2026-01-19 at 17 08 33" src="https://github.com/user-attachments/assets/63a33f30-6db6-4b1f-a1a7-e11d89d85277" />
+
+
 
 ## Prerequisites
 
