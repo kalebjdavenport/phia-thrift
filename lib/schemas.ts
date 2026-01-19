@@ -9,7 +9,7 @@ export const identificationResponseSchema = z.object({
   pattern: z.string(),
   material: z.string().nullable(),
   style: z.string(),
-  brand: z.string().nullable(),
+  brand: z.string(),
   productName: z.string().nullable(),
   confidence: z.object({
     brand: z.enum(["high", "medium", "low", "none"]),
