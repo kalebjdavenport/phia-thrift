@@ -1,9 +1,10 @@
 import { forwardRef, useCallback, useMemo } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Pressable, Linking } from 'react-native';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { X } from 'lucide-react-native';
 import type { IdentificationResponse } from '@/lib/schemas';
 import { IconButton } from '@/components/ui/IconButton';
+import { buildPhiaSearchUrl } from '@/lib/utils';
 
 interface ResultsSheetProps {
   result: IdentificationResponse | null;
@@ -96,6 +97,18 @@ export const ResultsSheet = forwardRef<BottomSheet, ResultsSheetProps>(
           <View className="mt-4">
             <Text className="text-sm text-muted">{result.reasoning}</Text>
           </View>
+
+          {/* Search on Phia Button */}
+          {result.confidence.brand !== 'none' && (
+            <Pressable
+              className="mt-6 mb-4 rounded-xl bg-purple-600 py-4 active:bg-purple-700"
+              onPress={() => Linking.openURL(buildPhiaSearchUrl(result))}
+            >
+              <Text className="text-center text-lg font-semibold text-white">
+                Search on Phia
+              </Text>
+            </Pressable>
+          )}
             </>
           )}
         </BottomSheetView>

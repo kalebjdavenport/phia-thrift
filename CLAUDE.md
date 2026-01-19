@@ -65,3 +65,14 @@ Validate all API responses with Zod schemas before use.
 2. If granted → go directly to camera
 3. If not granted → show landing screen
 4. Tap "Open Camera" → request permission → open camera
+
+### Phia Search Feature
+After identification, show a "Search on Phia" button that opens external search.
+
+**URL format:** `https://phia.com/search/{brand}%20{subcategory}%20{color}%20{material}%20{pattern}%20{style}%20{productName}`
+
+**Rules:**
+- Only show button when `confidence.brand !== 'none'`
+- URL-encode all values, filter out null/empty values
+- Variable order: brand (1st), subcategory (2nd), then color, material, pattern, style, productName
+- Big purple button at bottom of ResultsSheet
