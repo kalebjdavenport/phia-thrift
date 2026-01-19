@@ -1,18 +1,20 @@
 import { forwardRef, useCallback, useMemo } from 'react';
 import { View, Text, Pressable, Linking } from 'react-native';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
-import { X } from 'lucide-react-native';
+import { X, AlertCircle } from 'lucide-react-native';
 import type { IdentificationResponse } from '@/lib/schemas';
 import { IconButton } from '@/components/ui/IconButton';
 import { buildPhiaSearchUrl } from '@/lib/utils';
 
 interface ResultsSheetProps {
   result: IdentificationResponse | null;
+  error: string | null;
   onClose: () => void;
+  onRetry: () => void;
 }
 
 export const ResultsSheet = forwardRef<BottomSheet, ResultsSheetProps>(
-  function ResultsSheet({ result, onClose }, ref) {
+  function ResultsSheet({ result, error, onClose, onRetry }, ref) {
     const snapPoints = useMemo(() => ['50%', '85%'], []);
 
     const renderBackdrop = useCallback(
@@ -41,7 +43,32 @@ export const ResultsSheet = forwardRef<BottomSheet, ResultsSheetProps>(
         }}
       >
         <BottomSheetView className="flex-1 px-6">
-          {!result ? null : (
+          {/* Error State */}
+          {error ? (
+            <>
+              <View className="mb-4 flex-row items-center justify-between">
+                <Text className="text-xl font-bold text-primary">Error</Text>
+                <IconButton icon={X} color="#000" size={24} onPress={onClose} />
+              </View>
+              <View className="items-center py-8">
+                <AlertCircle size={48} color="#ef4444" />
+                <Text className="mt-4 text-center text-lg font-medium text-primary">
+                  Something went wrong
+                </Text>
+                <Text className="mt-2 text-center text-sm text-muted">
+                  {error}
+                </Text>
+                <Pressable
+                  className="mt-6 rounded-xl bg-primary px-8 py-3 active:bg-secondary"
+                  onPress={onRetry}
+                >
+                  <Text className="text-center text-base font-semibold text-white">
+                    Try Again
+                  </Text>
+                </Pressable>
+              </View>
+            </>
+          ) : !result ? null : (
             <>
           {/* Header */}
           <View className="mb-4 flex-row items-center justify-between">

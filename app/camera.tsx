@@ -18,7 +18,7 @@ export default function CameraScreen() {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const { cameraRef, facing, flash, isCapturing, toggleFacing, toggleFlash, capture } = useCamera();
-  const { identify, reset, isLoading, result } = useIdentification();
+  const { identify, reset, isLoading, result, error } = useIdentification();
 
   async function handleCapture() {
     const processed = await capture();
@@ -26,6 +26,12 @@ export default function CameraScreen() {
       await identify(processed.base64, processed.uri);
       bottomSheetRef.current?.snapToIndex(0);
     }
+  }
+
+  function handleRetry() {
+    bottomSheetRef.current?.close();
+    reset();
+    handleCapture();
   }
 
   function handleCloseSheet() {
@@ -89,7 +95,9 @@ export default function CameraScreen() {
         <ResultsSheet
           ref={bottomSheetRef}
           result={result}
+          error={error}
           onClose={handleCloseSheet}
+          onRetry={handleRetry}
         />
       </View>
     </GestureHandlerRootView>

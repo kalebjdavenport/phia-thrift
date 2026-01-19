@@ -10,11 +10,9 @@ export function buildPhiaSearchUrl(result: IdentificationResponse): string {
   const parts = [
     result.brand,
     result.subcategory,
+    result.productName,
     result.color,
     result.material,
-    result.pattern,
-    result.style,
-    result.productName,
   ].filter((part): part is string => !!part);
 
   const query = parts.join(" ");
