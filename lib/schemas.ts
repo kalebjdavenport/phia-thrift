@@ -2,6 +2,7 @@ import { z } from "zod";
 
 // GPT-4o unified identification response schema
 export const identificationResponseSchema = z.object({
+  identified: z.boolean(),
   category: z.string(),
   subcategory: z.string(),
   color: z.string(),

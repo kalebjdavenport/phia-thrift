@@ -5,6 +5,7 @@ const OPENAI_API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
 const USE_MOCK = false; // Set to false to use real API
 
 const MOCK_RESPONSE: IdentificationResponse = {
+  identified: true,
   category: "Pants",
   subcategory: "Jeans",
   color: "Blue",
@@ -17,21 +18,26 @@ const MOCK_RESPONSE: IdentificationResponse = {
   reasoning: "Classic blue denim jeans with visible Levi's red tab",
 };
 
-const IDENTIFICATION_PROMPT = `Analyze this clothing item and respond with JSON only:
+const IDENTIFICATION_PROMPT = `Identify the clothing item at the CENTER of this image. Focus on whatever is in the middle/focal point of the photo, NOT whatever takes up the most space. If there are multiple items visible, analyze ONLY the one that appears to be the main subject based on positioning (centered) and focus.
+
+If you CANNOT identify a clothing item (image is blurry, no clothing visible, unclear what the subject is, etc.), set "identified" to false and explain why in "reasoning". Use placeholder values for other fields.
+
+Respond with JSON only:
 {
-  "category": string,        // e.g., "Pants", "Shirt", "Jacket"
-  "subcategory": string,     // e.g., "Jeans", "T-Shirt", "Blazer"
-  "color": string,           // Primary color
-  "pattern": string,         // e.g., "Solid", "Striped", "Plaid"
-  "material": string | null, // Best guess: "Denim", "Cotton", "Wool"
-  "style": string,           // e.g., "Casual", "Formal", "Sporty"
+  "identified": boolean,     // false if you cannot identify a clothing item
+  "category": string,        // e.g., "Shoes", "Pants", "Shirt", "Jacket" (use "Unknown" if not identified)
+  "subcategory": string,     // e.g., "Sneakers", "Jeans", "T-Shirt", "Blazer" (use "Unknown" if not identified)
+  "color": string,           // Primary color (use "Unknown" if not identified)
+  "pattern": string,         // e.g., "Solid", "Striped", "Plaid" (use "Unknown" if not identified)
+  "material": string | null, // Best guess: "Leather", "Denim", "Cotton", "Wool"
+  "style": string,           // e.g., "Casual", "Formal", "Sporty", "Athletic" (use "Unknown" if not identified)
   "brand": string | null,    // Do your best to guess based on style, cut, stitching, hardware, design elements, but be cautious about knock-offs and dupes
   "productName": string | null, // Best guess if recognizable
   "confidence": {
     "brand": "high" | "medium" | "low" | "none",  // high=logo visible, medium=distinctive features, low=educated guess
     "material": "high" | "medium" | "low"
   },
-  "reasoning": string        // Brief explanation including brand reasoning
+  "reasoning": string        // Brief explanation. If not identified, explain why (blurry, no clothing, multiple items, etc.)
 }`;
 
 export async function identifyClothing(
