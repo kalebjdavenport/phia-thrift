@@ -13,7 +13,7 @@ export const identificationResponseSchema = z.object({
   productName: z.string().nullable(),
   confidence: z.object({
     brand: z.enum(["high", "medium", "low", "none"]),
-    material: z.enum(["high", "medium", "low"]),
+    material: z.enum(["high", "medium", "low", "none"]),
   }),
   reasoning: z.string(),
 });

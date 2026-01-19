@@ -10,7 +10,7 @@ export type IdentificationResult = {
   productName: string | null;
   confidence: {
     brand: "high" | "medium" | "low" | "none";
-    material: "high" | "medium" | "low";
+    material: "high" | "medium" | "low" | "none";
   };
   reasoning: string;
   timestamp: number;

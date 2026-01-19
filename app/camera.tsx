@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { View, Text } from 'react-native';
 import { CameraView } from 'expo-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { X, Zap, ZapOff, SwitchCamera, Image } from 'lucide-react-native';
+import { X, Zap, ZapOff, SwitchCamera } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet from '@gorhom/bottom-sheet';
@@ -30,11 +30,11 @@ export default function CameraScreen() {
     }
   }
 
-  function handleRetry() {
+  async function handleRetry() {
     bottomSheetRef.current?.close();
     reset();
     setImageUri(null);
-    handleCapture();
+    await handleCapture();
   }
 
   function handleCloseSheet() {
@@ -45,10 +45,6 @@ export default function CameraScreen() {
 
   function handleClose() {
     router.replace('/primer');
-  }
-
-  function handleGallery() {
-    // TODO: Open image picker
   }
 
   const showLoading = isCapturing || isLoading;
@@ -82,15 +78,12 @@ export default function CameraScreen() {
             className="absolute bottom-0 left-0 right-0 bg-black/80"
             style={{ paddingBottom: insets.bottom + 16 }}
           >
-            <View className="flex-row items-center justify-around py-4">
-              <IconButton
-                icon={Image}
-                onPress={handleGallery}
-                size={28}
-              />
+            <View className="flex-row items-center justify-center py-4">
               <CaptureButton
                 onPress={handleCapture}
               />
+            </View>
+            <View className="absolute right-8 top-1/2 -translate-y-1/2">
               <IconButton
                 icon={SwitchCamera}
                 onPress={toggleFacing}

@@ -46,20 +46,3 @@ export async function processImage(sourceUri: string): Promise<ProcessedImage> {
   };
 }
 
-/**
- * Get the last processed image if it exists
- */
-export async function getLastProcessedImage(): Promise<string | null> {
-  const cachedFile = new File(Paths.cache, 'processed_capture.jpg');
-  return cachedFile.exists ? cachedFile.uri : null;
-}
-
-/**
- * Delete the processed image from cache
- */
-export async function clearProcessedImage(): Promise<void> {
-  const cachedFile = new File(Paths.cache, 'processed_capture.jpg');
-  if (cachedFile.exists) {
-    await cachedFile.delete();
-  }
-}

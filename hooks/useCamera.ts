@@ -29,7 +29,8 @@ export function useCamera() {
     } finally {
       setIsCapturing(false);
     }
-  }, [isCapturing]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     cameraRef,
