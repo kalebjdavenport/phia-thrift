@@ -1,6 +1,6 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef } from 'react';
 import { View, Text } from 'react-native';
-import { CameraView, type CameraType } from 'expo-camera';
+import { CameraView } from 'expo-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { X, Zap, ZapOff, SwitchCamera, Image } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
@@ -9,49 +9,28 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import { IconButton } from '@/components/ui/IconButton';
 import { CaptureButton } from '@/components/CaptureButton';
 import { ResultsSheet } from '@/components/ResultsSheet';
-import { identifyClothing } from '@/lib/api/openai';
-import { processImage } from '@/lib/image';
-import type { IdentificationResponse } from '@/lib/schemas';
+import { useCamera } from '@/hooks/useCamera';
+import { useIdentification } from '@/hooks/useIdentification';
 
 export default function CameraScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const cameraRef = useRef<CameraView>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const [facing, setFacing] = useState<CameraType>('back');
-  const [flash, setFlash] = useState(false);
-  const [capturing, setCapturing] = useState(false);
-  const [result, setResult] = useState<IdentificationResponse | null>(null);
 
-  const toggleFlash = useCallback(() => setFlash((f) => !f), []);
-  const toggleFacing = useCallback(
-    () => setFacing((f) => (f === 'back' ? 'front' : 'back')),
-    []
-  );
+  const { cameraRef, facing, flash, isCapturing, toggleFacing, toggleFlash, capture } = useCamera();
+  const { identify, reset, isLoading, result } = useIdentification();
 
   async function handleCapture() {
-    if (!cameraRef.current || capturing) return;
-
-    setCapturing(true);
-    try {
-      const photo = await cameraRef.current.takePictureAsync();
-      if (photo?.uri) {
-        // Resize to 1024px, convert to JPEG, save to cache
-        const processed = await processImage(photo.uri);
-        const identification = await identifyClothing(processed.base64);
-        setResult(identification);
-        bottomSheetRef.current?.snapToIndex(0);
-      }
-    } catch (error) {
-      console.error('Capture error:', error);
-    } finally {
-      setCapturing(false);
+    const processed = await capture();
+    if (processed) {
+      await identify(processed.base64, processed.uri);
+      bottomSheetRef.current?.snapToIndex(0);
     }
   }
 
   function handleCloseSheet() {
     bottomSheetRef.current?.close();
-    setResult(null);
+    reset();
   }
 
   function handleClose() {
@@ -61,6 +40,8 @@ export default function CameraScreen() {
   function handleGallery() {
     // TODO: Open image picker
   }
+
+  const showLoading = isCapturing || isLoading;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -92,14 +73,16 @@ export default function CameraScreen() {
         >
           <View className="flex-row items-center justify-around py-4">
             <IconButton icon={Image} onPress={handleGallery} size={28} />
-            <CaptureButton onPress={handleCapture} disabled={capturing} />
+            <CaptureButton onPress={handleCapture} disabled={showLoading} />
             <IconButton icon={SwitchCamera} onPress={toggleFacing} size={28} />
           </View>
         </View>
 
-        {capturing && (
+        {showLoading && (
           <View className="absolute inset-0 items-center justify-center bg-black/50">
-            <Text className="text-lg text-white">Identifying...</Text>
+            <Text className="text-lg text-white">
+              {isCapturing ? 'Capturing...' : 'Identifying...'}
+            </Text>
           </View>
         )}
 
