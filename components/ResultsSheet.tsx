@@ -126,16 +126,19 @@ export const ResultsSheet = forwardRef<BottomSheet, ResultsSheetProps>(
           </View>
 
           {/* Search on Phia Button */}
-          {result.confidence.brand !== 'none' && (
-            <Pressable
-              className="mt-6 mb-4 rounded-xl bg-purple-600 py-4 active:bg-purple-700"
-              onPress={() => Linking.openURL(buildPhiaSearchUrl(result))}
-            >
-              <Text className="text-center text-lg font-semibold text-white">
-                Search on Phia
-              </Text>
-            </Pressable>
-          )}
+          {(() => {
+            const searchUrl = buildPhiaSearchUrl(result);
+            return searchUrl ? (
+              <Pressable
+                className="mt-6 mb-4 rounded-xl bg-purple-600 py-4 active:bg-purple-700"
+                onPress={() => Linking.openURL(searchUrl)}
+              >
+                <Text className="text-center text-lg font-semibold text-white">
+                  Search on Phia
+                </Text>
+              </Pressable>
+            ) : null;
+          })()}
             </>
           )}
         </BottomSheetView>
